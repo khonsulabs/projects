@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <p>We are a group of developers aiming to enrich peoples lives through open source development.</p>
+    <p>We have big plans and are building our vision of an ideal, developer-friendly application
+        environment. As such, we have a lot of repositories, and unless you're following closely <a
+            href="https://discord.khonsulabs.com/">on our Discord</a> or <a href="https://community.khonsulabs.com/">our
+            forums</a>, it can be hard to see everything we're
+        working on and understand how it fits into the bigger picture.</p>
+    <p>Below is a feed of our activity. Next to the repository name will be an Info icon that will open a short summary
+        about the repository and why we're working on it. If a repository doesn't have extra information, and you want
+        to know more
+        about it, please file <a
+            href="https://github.com/khonsulabs/projects/issues/new?title=More+information+requested+for+REPOSITORY">an
+            issue.</a></p>
+</div>
+<hr />
+<div class="row">
+    {% for day in days %}
+    <h3 class="text-center">{{ day.display }}</h3>
+    {% for repository, summary in day.repositories %}
+    <h4>
+        {% if summary.forked_from %}
+        {{ summary.forked_from }} (forked)
+        {% else %}
+        {{ repository }}
+        {% endif %}
+        {% if projects[repository] %}
+        <a data-bs-toggle="modal" data-bs-target="#{{repository}}" href="#">
+            <i class="bi bi-info-circle-fill"></i>
+        </a>
+        {% endif %}
+        <a href="{{ summary.url }}">
+            <i class="bi bi-github"></i>
+        </a>
+    </h4>
+
+    {% for issue in summary.issues_closed %}
+    <p>
+        <img src="/static/checkmark-circle.svg" class="icon" /> Issue <a href="{{ issue.url }}">#{{ issue.id
+            }}</a>
+        was closed:
+        {{issue.title}}
+    </p>
+    {% endfor %}
+
+    {% for login, head in summary.commit_authors %}
+    {% for head, count in head %}
+    <p>
+        <img src="/static/github-original.svg" class="icon" />
+        <a href="https://github.com/{{login}}">@{{login}}</a>
+        pushed <a href="https://github.com/khonsulabs/{{ repository }}/commits/{{head}}?author={{ login }}">
+            to branch <code>{{head}}</code>.</a>
+    </p>
+
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}
+    <hr />
+    {% endfor %}
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+{% for name, description in projects %}
+<div class="modal fade" id="{{ name }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{{ name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ description | safe }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<script>
+    const projects = {{ projects | json_encode() | safe }};
+    function popoverContent(projectName) {
+        const no_project = document.getElementById("no-project");
+        if (no_project) {
+            no_project.remove();
+        }
+        const project = projects[projectName];
+        document.getElementById("project-name").innerHTML = project.name;
+        document.getElementById("project-tagline").innerHTML = project.innerHTML;
+        document.getElementById("project-description").innerHTML = project.description;
+    }
+</script>
+{% endblock scripts %}
