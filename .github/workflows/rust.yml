@@ -61,15 +61,15 @@ jobs:
 
       - name: Configure SSH 
         run: |
-          echo "$PROJECTS_SSH_PRIVATE_KEY" > private_key
-          chmod 0600 private_key
+          mkdir ~/.ssh
+          chmod 0600 ~/.ssh
+          echo "$PROJECTS_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 0600 ~/.ssh/deploy_key
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-
           
       - name: Deploy
         run: |
           rsync -avz release/ projects@khonsulabs.com:projects/
-          ssh -i ./private_key projects@khonsulabs.com sudo /usr/bin/systemctl restart projects.service
-          rm private_key
+          ssh -i ~/.ssh/deploy_key projects@khonsulabs.com sudo /usr/bin/systemctl restart projects.service
         env:
           PROJECTS_SSH_PRIVATE_KEY: ${{ secrets.PROJECTS_SSH_PRIVATE_KEY }}
