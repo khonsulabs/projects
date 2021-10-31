@@ -2,82 +2,91 @@
 
 {% block content %}
 <div class="row">
-    <p>We are a group of developers aiming to enrich peoples lives through open source development.</p>
-    <p>We have big plans and are building our vision of an ideal, developer-friendly application
-        environment. As such, we have a lot of repositories, and unless you're following closely <a
-            href="https://discord.khonsulabs.com/">on our Discord</a> or <a href="https://community.khonsulabs.com/">our
-            forums</a>, it can be hard to see everything we're
-        working on and understand how it fits into the bigger picture.</p>
-    <p>Below is a feed of our activity. Next to the repository name will be an Info icon that will open a short summary
-        about the repository and why we're working on it. If a repository doesn't have extra information, and you want
-        to know more
-        about it, please file <a
-            href="https://github.com/khonsulabs/projects/issues/new?title=More+information+requested+for+REPOSITORY">an
-            issue.</a></p>
-</div>
-<hr />
-<div class="row">
-    {% for day in days %}
-    <h3 class="text-center">{{ day.display }}</h3>
-    {% for repository, summary in day.repositories %}
-    <div class="container">
-        <h4>
-            {% if summary.forked_from %}
-            {{ summary.forked_from }} (forked)
-            {% else %}
-            {{ repository }}
-            {% endif %}
-            {% if projects[repository] %}
-            <a data-bs-toggle="modal" data-bs-target="#{{repository}}" href="#">
-                <i class="bi bi-info-circle-fill"></i>
-            </a>
-            {% endif %}
-            <a href="{{ summary.url }}">
-                <i class="bi bi-github"></i>
-            </a>
-        </h4>
-
-        <div class="container">
-            {% for release in summary.releases %}
-            <p>
-                {% if release.prerelease %}
-                <i class="bi bi-cone-striped"></i>
-                {% else %}
-                <i class="bi bi-truck"></i>
-                {% endif %}
-
-                <a href="{{ release.html_url }}">{{ release.name }}</a> was released.
+    <div class="col">
+        <div class="container border mt-2 p-4">
+            <img src="/logo.png" alt="" height="200" class="d-block mx-auto" />
+            <h2 class="text-center">About Khonsu Labs</h2>
+            <p>We are a group of developers aiming to enrich peoples lives
+                through open source development.</p>
+            <p>We have big plans and are building our vision of an ideal,
+                developer-friendly application environment. As such, we have a lot
+                of repositories, and unless you're following closely <a href="https://discord.khonsulabs.com/">on our
+                    Discord</a> or <a href="https://community.khonsulabs.com/">our forums</a>, it can be
+                hard to see everything we're working on and understand how it fits
+                into the bigger picture.</p>
+            <p>This page contains our recent activity. Next to a repository name
+                will be an Info icon that will open a short summary about the
+                repository and why we're working on it. If a repository doesn't have
+                extra information, and you want to know more about it, please file
+                <a
+                    href="https://github.com/khonsulabs/projects/issues/new?title=More+information+requested+for+REPOSITORY">an
+                    issue.</a>
             </p>
-            <blockquote class="ps-4">
-                {{ release.short_description_html | safe }}
-            </blockquote>
-            {% endfor %}
-
-            {% for issue in summary.issues_closed %}
-            <p>
-                <i class="bi bi-check2-square"></i> Issue <a href="{{ issue.url }}">#{{ issue.id
-                    }}</a>
-                was closed:
-                {{issue.title}}
-            </p>
-            {% endfor %}
-
-            {% for login, head in summary.commit_authors %}
-            {% for head, count in head %}
-            <p>
-                <i class="bi bi-cloud-upload-fill"></i>
-                <a href="https://github.com/{{login}}">@{{login}}</a>
-                pushed <a href="https://github.com/khonsulabs/{{ repository }}/commits/{{head}}?author={{ login }}">
-                    to branch <code>{{head}}</code>.</a>
-            </p>
-
-            {% endfor %}
-            {% endfor %}
         </div>
     </div>
-    {% endfor %}
-    <hr />
-    {% endfor %}
+    <div class="col-8">
+        {% for day in days %}
+        <h3 class="text-center">{{ day.display }}</h3>
+        {% for repository, summary in day.repositories %}
+        <div class="container">
+            <h4>
+                {% if summary.forked_from %}
+                {{ summary.forked_from }} (forked)
+                {% else %}
+                {{ repository }}
+                {% endif %}
+                {% if projects[repository] %}
+                <a data-bs-toggle="modal" data-bs-target="#{{repository}}" href="#">
+                    <i class="bi bi-info-circle-fill"></i>
+                </a>
+                {% endif %}
+                <a href="{{ summary.url }}">
+                    <i class="bi bi-github"></i>
+                </a>
+            </h4>
+
+            <div class="container">
+                {% for release in summary.releases %}
+                <p>
+                    {% if release.prerelease %}
+                    <i class="bi bi-cone-striped"></i>
+                    {% else %}
+                    <i class="bi bi-truck"></i>
+                    {% endif %}
+
+                    <a href="{{ release.html_url }}">{{ release.name }}</a> was released.
+                </p>
+                <blockquote class="ps-4">
+                    {{ release.short_description_html | safe }}
+                </blockquote>
+                {% endfor %}
+
+                {% for issue in summary.issues_closed %}
+                <p>
+                    <i class="bi bi-check2-square"></i> Issue <a href="{{ issue.url }}">#{{ issue.id
+                        }}</a>
+                    was closed:
+                    {{issue.title}}
+                </p>
+                {% endfor %}
+
+                {% for login, head in summary.commit_authors %}
+                {% for head, count in head %}
+                <p>
+                    <i class="bi bi-cloud-upload-fill"></i>
+                    <a href="https://github.com/{{login}}">@{{login}}</a>
+                    pushed <a href="https://github.com/khonsulabs/{{ repository }}/commits/{{head}}?author={{ login }}">
+                        to branch <code>{{head}}</code>.</a>
+                </p>
+
+                {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        <hr />
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock content %}
