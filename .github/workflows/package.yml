@@ -1,0 +1,23 @@
+name: Package
+
+on: [push]
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    environment: Production
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v1
+
+      - name: Build 
+        run: |
+          cargo build --bin khonsulabs-projects --release
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: khonsulabs-projects
+          path: target/release/khonsulabs-projects
