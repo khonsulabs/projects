@@ -55,6 +55,7 @@ jobs:
       - name: Gather artifacts 
         run: |
           mkdir release
+          chmod +x khonsulabs-projects
           mv khonsulabs-projects release/
           cp -r static/ release/
           cp -r templates release/ 
