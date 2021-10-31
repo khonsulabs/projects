@@ -83,8 +83,7 @@ pub async fn serve(database: Database<Projects>) -> anyhow::Result<()> {
     // build our application with a route
     let app = Router::new()
         .route("/", get(handler))
-        .nest(
-            "/static",
+        .or(
             service::get(ServeDir::new("./static")).handle_error(|error: std::io::Error| {
                 Ok::<_, Infallible>((
                     StatusCode::INTERNAL_SERVER_ERROR,
