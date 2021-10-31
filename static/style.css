@@ -17,3 +17,8 @@ hidden {
 .navbar {
     padding-bottom: 10px;
 }
+
+.project-tagline {
+    text-align: center;
+    font-style: italic;
+}

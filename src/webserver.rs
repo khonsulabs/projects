@@ -1,20 +1,10 @@
-use std::{
-    collections::{HashMap, HashSet},
-    convert::Infallible,
-    net::SocketAddr,
-    sync::Arc,
-};
+use std::{collections::HashMap, convert::Infallible, net::SocketAddr, sync::Arc};
 
-use axum::{
-    extract, handler::get, http::Response, response::Html, service, AddExtensionLayer, Router,
-};
+use axum::{extract, handler::get, response::Html, service, AddExtensionLayer, Router};
 use bonsaidb::{core::connection::Connection, local::Database};
-use chrono::{Duration, NaiveDate, Utc};
+use chrono::{Duration, Utc};
 use http::StatusCode;
-use octocrab::models::{
-    events::payload::{EventPayload, IssuesEventAction, PullRequestEventAction},
-    pulls::PullRequestAction,
-};
+use octocrab::models::events::payload::{EventPayload, IssuesEventAction};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
@@ -34,8 +24,39 @@ const FORKED_REPOSITORIES: [&str; 5] = [
 static PROJECTS: Lazy<HashMap<String, Project>> = Lazy::new(|| {
     [Project {
         name: "BonsaiDb",
-        description: "<p>This is a database</p>",
-    }]
+        tagline: "A document database that grows with you.",
+        description: r#"
+            We evaluated the landscape of pure-Rust database implementations, and none fit our goals for an eventual architecture that scaled the way we wanted. Additionally, the non-Rust standards are difficult to deploy in a highly-available fashion.
+        "#,
+        homepage: Some("https://bonsaidb.io/"),
+        repository: "https://github.com/khonsulabs/bonsaidb",
+        documentation: "https://dev.bonsaidb.io/main/bonsaidb",
+    },
+    Project {
+        name: "Nebari",
+        tagline: "ACID-compliant key-value database implementation using an append-only file format.",
+        description: r#"
+            <p>While we started BonsaiDb atop another storage layer, we decided to pursue an in-house implementation that we could tailor-fit to the needs of BonsaiDb.
+
+            <p>Nebari aims to provide speed, safety, and reliability while still remaining easy to understand and approachable to new contributors.
+        "#,
+        homepage: None,
+        repository: "https://github.com/khonsulabs/nebari",
+        documentation: "https://nebari.bonsaidb.io/main/nebari",
+    },
+    Project {
+        name: "Kludgine",
+        tagline: "2D graphics and windowing built atop wgpu",
+        description: r#"
+            <p>Deep down our passion is still with games, even though we may be focusing a lot of general-purpose application development at the moment. Kludgine was born after evaluating other libraries at the time and deciding there was still room for improvement.
+
+            <p>Kludgine is the base layer for Gooey, our Graphical User Interface crate.
+        "#,
+        homepage: None,
+        repository: "https://github.com/khonsulabs/nebari",
+        documentation: "https://nebari.bonsaidb.io/main/nebari",
+    },
+    ]
     .into_iter()
     .map(|project| (project.name.to_ascii_lowercase(), project))
     .collect()
@@ -44,7 +65,11 @@ static PROJECTS: Lazy<HashMap<String, Project>> = Lazy::new(|| {
 #[derive(Serialize, Deserialize, Debug)]
 struct Project {
     pub name: &'static str,
+    pub tagline: &'static str,
     pub description: &'static str,
+    pub homepage: Option<&'static str>,
+    pub repository: &'static str,
+    pub documentation: &'static str,
 }
 
 pub async fn serve(database: Database<Projects>) -> anyhow::Result<()> {
@@ -183,7 +208,6 @@ async fn handler(
     let mut context = Context::new();
     context.insert("days", &days);
     context.insert("projects", &*PROJECTS);
-    println!("Tera: {:?}", templates);
     Ok(Html(templates.render("index.html", &context).map_err(
         |err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
     )?))

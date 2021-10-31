@@ -64,16 +64,28 @@
 {% endblock content %}
 
 {% block scripts %}
-{% for name, description in projects %}
-<div class="modal fade" id="{{ name }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+{% for repo, project in projects %}
+<div class="modal fade" id="{{ repo }}" tabindex="-1" aria-labelledby="{{ repo }}-label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ name }}</h5>
+                <h5 class="modal-title" id="{{ repo }}-label">{{ project.name }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                {{ description | safe }}
+                <p class="project-tagline">{{ project.tagline }}</p>
+                {{ project.description | safe }}
+                <div class="btn-group d-block">
+                    {% if project.homepage %}
+                    <a href="{{ project.homepage }}" class="btn btn-outline-primary"><i class="bi bi-house"></i>
+                        Homepage</a>
+                    {% endif %}
+                    <a href="{{ project.repository }}" class="btn btn-outline-primary">
+                        <i class="bi bi-github"></i> Source Code</a>
+                    <a href="{{ project.documentation }}" class="btn btn-outline-primary"><i
+                            class="bi bi-journal-code"></i>
+                        Documentation</a>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -82,17 +94,4 @@
     </div>
 </div>
 {% endfor %}
-<script>
-    const projects = {{ projects | json_encode() | safe }};
-    function popoverContent(projectName) {
-        const no_project = document.getElementById("no-project");
-        if (no_project) {
-            no_project.remove();
-        }
-        const project = projects[projectName];
-        document.getElementById("project-name").innerHTML = project.name;
-        document.getElementById("project-tagline").innerHTML = project.innerHTML;
-        document.getElementById("project-description").innerHTML = project.description;
-    }
-</script>
 {% endblock scripts %}

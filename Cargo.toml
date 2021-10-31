@@ -29,9 +29,9 @@ http = "0.2"
 tower-http = { version = "0.1", features = ["fs"] }
 once_cell = "1"
 
-[patch.crates-io]
-pot = { path = "../pot/pot", version = "0.1.0-alpha.2" }
-nebari = { path = "../nebari/nebari", version = "0.1.0-rc.4" }
+# [patch.crates-io]
+# pot = { path = "../pot/pot", version = "0.1.0-alpha.2" }
+# nebari = { path = "../nebari/nebari", version = "0.1.0-rc.4" }
 
-[patch."https://github.com/khonsulabs/bonsaidb.git"]
-bonsaidb = { path = "../bonsaidb/crates/bonsaidb" }
+# [patch."https://github.com/khonsulabs/bonsaidb.git"]
+# bonsaidb = { path = "../bonsaidb/crates/bonsaidb" }

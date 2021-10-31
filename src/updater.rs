@@ -5,14 +5,11 @@ use bonsaidb::{
         connection::{AccessPolicy, Connection, QueryKey},
         schema::Collection,
     },
-    local::{Database, Storage},
+    local::Database,
 };
-use octocrab::{
-    models::events::{Event, EventType},
-    Octocrab,
-};
+use octocrab::models::events::{Event, EventType};
 use reqwest::{
-    header::{ACCEPT, AUTHORIZATION, USER_AGENT},
+    header::{ACCEPT, USER_AGENT},
     Client,
 };
 

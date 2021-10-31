@@ -326,6 +326,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb"
 version = "0.1.0-dev.4"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#7f7b5704355c3c93410f0feae482f4fe045bd3fc"
 dependencies = [
  "bonsaidb-core",
  "bonsaidb-local",
@@ -334,6 +335,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-core"
 version = "0.1.0-dev.4"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#7f7b5704355c3c93410f0feae482f4fe045bd3fc"
 dependencies = [
  "actionable",
  "async-trait",
@@ -352,6 +354,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-local"
 version = "0.1.0-dev.4"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#7f7b5704355c3c93410f0feae482f4fe045bd3fc"
 dependencies = [
  "async-trait",
  "bincode",
@@ -379,6 +382,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-macros"
 version = "0.1.0-dev.4"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#7f7b5704355c3c93410f0feae482f4fe045bd3fc"
 dependencies = [
  "proc-macro-error",
  "quote",
@@ -528,6 +532,7 @@ dependencies = [
 [[package]]
 name = "circulate"
 version = "0.1.0"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#7f7b5704355c3c93410f0feae482f4fe045bd3fc"
 dependencies = [
  "async-lock",
  "flume",
@@ -1482,6 +1487,8 @@ dependencies = [
 [[package]]
 name = "nebari"
 version = "0.1.0-rc.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a94c26ae2a0a2d2894d4b9f0832ccd616778baf831902393bdfb4e426253c07d"
 dependencies = [
  "backtrace",
  "byteorder",
@@ -1856,6 +1863,8 @@ dependencies = [
 [[package]]
 name = "pot"
 version = "0.1.0-alpha.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d4f7ebc70a9e3d140d63991b3592da907c1b8c5e0a0f4e2e7937940ff1cc6c8"
 dependencies = [
  "byteorder",
  "bytes",
