@@ -66,10 +66,10 @@ jobs:
           echo "$PROJECTS_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 0600 ~/.ssh/deploy_key
           ssh-keyscan -H khonsulabs.com ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+        env:
+          PROJECTS_SSH_PRIVATE_KEY: ${{ secrets.PROJECTS_SSH_PRIVATE_KEY }}
           
       - name: Deploy
         run: |
           rsync -avz -e "ssh -i ~/.ssh/deploy_key" release/ projects@khonsulabs.com:projects/
           ssh -i ~/.ssh/deploy_key projects@khonsulabs.com sudo /usr/bin/systemctl restart projects.service
-        env:
-          PROJECTS_SSH_PRIVATE_KEY: ${{ secrets.PROJECTS_SSH_PRIVATE_KEY }}
