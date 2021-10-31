@@ -172,7 +172,7 @@ async fn handler(
                 let payload =
                     serde_json::value::from_value::<IssuesPayload>(github_event.payload.clone())
                         .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?;
-                if payload.action == "closed" {
+                if payload.action != "closed" {
                     continue;
                 }
 
