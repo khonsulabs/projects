@@ -52,11 +52,24 @@ jobs:
         with:
           name: khonsulabs-projects
       
-      - name: Deploy 
+      - name: Gather artifacts 
         run: |
           mkdir release
           mv khonsulabs-projects release/
           cp -r static/ release/
           cp -r templates release/ 
+
+      - name: Configure SSH 
+        run: |
+          echo "$PROJECTS_SSH_PRIVATE_KEY" > private_key
+          chmod 0600 private_key
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+          
+      - name: Deploy
+        run: |
           rsync -avz release/ projects@khonsulabs.com:projects/
-          ssh projects@khonsulabs.com sudo /usr/bin/systemctl restart projects.service
+          ssh -i ./private_key projects@khonsulabs.com sudo /usr/bin/systemctl restart projects.service
+          rm private_key
+        env:
+          PROJECTS_SSH_PRIVATE_KEY: ${{ secrets.PROJECTS_SSH_PRIVATE_KEY }}
