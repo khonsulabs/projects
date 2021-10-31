@@ -69,7 +69,7 @@ jobs:
           
       - name: Deploy
         run: |
-          rsync -avz release/ projects@khonsulabs.com:projects/
+          rsync -avz -e "ssh -i ~/.ssh/deploy_key" release/ projects@khonsulabs.com:projects/
           ssh -i ~/.ssh/deploy_key projects@khonsulabs.com sudo /usr/bin/systemctl restart projects.service
         env:
           PROJECTS_SSH_PRIVATE_KEY: ${{ secrets.PROJECTS_SSH_PRIVATE_KEY }}
