@@ -7,13 +7,12 @@ use bonsaidb::{
     },
     local::Database,
 };
-use octocrab::models::events::{Event, EventType};
 use reqwest::{
     header::{ACCEPT, USER_AGENT},
     Client,
 };
 
-use crate::schema::{GithubEvent, GithubEventById, Projects};
+use crate::schema::{Event, GithubEventById, Projects};
 
 pub async fn update_events_periodically(storage: Database<Projects>) -> anyhow::Result<()> {
     let instance = Client::new();
@@ -48,8 +47,12 @@ async fn fetch_new_events(database: &Database<Projects>, client: &Client) -> any
         };
         for event in events.into_iter().filter(|evt| {
             matches!(
-                &evt.r#type,
-                EventType::PushEvent | EventType::IssuesEvent | EventType::PullRequestEvent
+                evt.kind.as_str(),
+                "PushEvent"
+                    | "IssuesEvent"
+                    | "PullRequestEvent"
+                    | "ReleaseEvent"
+                    | "SponshorshipEvent"
             )
         }) {
             if database
@@ -71,7 +74,7 @@ async fn fetch_new_events(database: &Database<Projects>, client: &Client) -> any
     tracing::info!("Received {} events", events_to_process.len());
     for event in events_to_process {
         tracing::debug!("Inserting event {:?}", event);
-        GithubEvent::from(event).insert_into(database).await?;
+        event.insert_into(database).await?;
     }
 
     Ok(())

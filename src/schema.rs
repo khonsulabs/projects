@@ -1,12 +1,11 @@
-use std::ops::{Deref, DerefMut};
-
 use async_trait::async_trait;
 use bonsaidb::core::schema::{
     Collection, CollectionName, CollectionSerializer, InvalidNameError, Name, Schema, SchemaName,
     Schematic, View,
 };
-use octocrab::models::events::Event;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Debug)]
 pub struct Projects;
@@ -17,36 +16,41 @@ impl Schema for Projects {
     }
 
     fn define_collections(schema: &mut Schematic) -> Result<(), bonsaidb::core::Error> {
-        schema.define_collection::<GithubEvent>()?;
+        schema.define_collection::<Event>()?;
         Ok(())
     }
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct GithubEvent(pub Event);
-
-impl From<Event> for GithubEvent {
-    fn from(evt: Event) -> Self {
-        Self(evt)
-    }
+pub struct Event {
+    pub id: String,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub actor: User,
+    #[serde(rename = "repo")]
+    pub repository: Repository,
+    pub payload: Value,
+    pub public: bool,
+    pub created_at: DateTime<Utc>,
 }
 
-impl Deref for GithubEvent {
-    type Target = Event;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+#[derive(Deserialize, Serialize, Debug)]
+pub struct User {
+    pub id: u64,
+    pub login: String,
+    pub url: String,
+    pub avatar_url: String,
 }
 
-impl DerefMut for GithubEvent {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Repository {
+    pub id: u64,
+    pub name: String,
+    pub url: String,
 }
 
 #[async_trait]
-impl Collection for GithubEvent {
+impl Collection for Event {
     fn collection_name() -> Result<CollectionName, InvalidNameError> {
         CollectionName::new("khonsulabs", "github-events")
     }
@@ -66,7 +70,7 @@ impl Collection for GithubEvent {
 pub struct GithubEventById;
 
 impl View for GithubEventById {
-    type Collection = GithubEvent;
+    type Collection = Event;
     type Key = String;
     type Value = ();
 
@@ -82,8 +86,8 @@ impl View for GithubEventById {
         &self,
         document: &bonsaidb::core::document::Document<'_>,
     ) -> bonsaidb::core::schema::MapResult<Self::Key, Self::Value> {
-        let event = document.contents::<GithubEvent>().unwrap();
-        Ok(vec![document.emit_key(event.0.id)])
+        let event = document.contents::<Event>().unwrap();
+        Ok(vec![document.emit_key(event.id)])
     }
 }
 
@@ -91,7 +95,7 @@ impl View for GithubEventById {
 pub struct GithubEventByDate;
 
 impl View for GithubEventByDate {
-    type Collection = GithubEvent;
+    type Collection = Event;
     type Key = String;
     type Value = ();
 
@@ -107,9 +111,64 @@ impl View for GithubEventByDate {
         &self,
         document: &bonsaidb::core::document::Document<'_>,
     ) -> bonsaidb::core::schema::MapResult<Self::Key, Self::Value> {
-        let event = document.contents::<GithubEvent>().unwrap();
-        Ok(vec![document.emit_key(
-            event.0.created_at.format("%Y-%m-%d").to_string(),
-        )])
+        let event = document.contents::<Event>().unwrap();
+        Ok(vec![
+            document.emit_key(event.created_at.format("%Y-%m-%d").to_string())
+        ])
     }
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct PushPayload {
+    #[serde(rename = "ref")]
+    pub reference: String,
+    pub head: String,
+    pub before: String,
+    pub commits: Vec<Commit>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct IssuesPayload {
+    pub action: String,
+    pub issue: Issue,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Issue {
+    pub title: String,
+    pub id: u64,
+    pub html_url: String,
+    pub number: u64,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct ReleasePayload {
+    pub action: String,
+    pub release: Release,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Release {
+    pub id: u64,
+    pub name: String,
+    pub html_url: String,
+    pub author: User,
+    pub draft: bool,
+    pub prerelease: bool,
+    pub short_description_html: String,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Commit {
+    pub sha: String,
+    pub message: String,
+    pub author: Author,
+    pub url: String,
+    pub distinct: bool,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Author {
+    pub name: String,
+    pub email: String,
 }

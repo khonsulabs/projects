@@ -22,3 +22,22 @@ hidden {
     text-align: center;
     font-style: italic;
 }
+
+.release h1, .release h2, .release h3 {
+    font-size: large;
+}
+.release h4 {
+    font-size: medium;
+}
+
+.release h5, .release h6 {
+    font-size: small;
+}
+
+.release h6 {
+    font-size: small;
+}
+
+.release {
+    padding-left: 2em;
+}

@@ -4,21 +4,24 @@ use axum::{extract, handler::get, response::Html, service, AddExtensionLayer, Ro
 use bonsaidb::{core::connection::Connection, local::Database};
 use chrono::{Duration, Utc};
 use http::StatusCode;
-use octocrab::models::events::payload::{EventPayload, IssuesEventAction};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
 use tower_http::services::ServeDir;
 
-use crate::schema::{GithubEvent, GithubEventByDate, Projects};
+use crate::schema::{
+    Event, GithubEventByDate, IssuesPayload, Projects, PushPayload, Release, ReleasePayload,
+};
 
 const CONTRIBUTOR_EMAILS: [&str; 2] = ["jon@khonsulabs.com", "daxpedda@gmail.com"];
-const FORKED_REPOSITORIES: [&str; 5] = [
+const FORKED_REPOSITORIES: [&str; 7] = [
     "iqlusioninc/crates",
     "novifinancial/opaque-ke",
     "dalek-cryptography/curve25519-dalek",
     "RustCrypto/password-hashes",
     "novifinancial/voprf",
+    "ModProg/derive-where",
+    "ModProg/derive-restricted",
 ];
 
 static PROJECTS: Lazy<HashMap<String, Project>> = Lazy::new(|| {
@@ -129,7 +132,7 @@ async fn handler(
     for event in events {
         let github_event = event
             .document
-            .contents::<GithubEvent>()
+            .contents::<Event>()
             .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?;
 
         // Ignore all events from github actions
@@ -137,21 +140,11 @@ async fn handler(
             continue;
         }
 
-        let local_repository_name = github_event.repo.name.split('/').nth(1).unwrap();
+        let local_repository_name = github_event.repository.name.split('/').nth(1).unwrap();
 
         let forked_repo = FORKED_REPOSITORIES
             .into_iter()
             .find(|repo| repo.split('/').nth(1).unwrap() == local_repository_name);
-
-        match &github_event.payload {
-            Some(EventPayload::IssuesEvent(payload)) => {
-                if !matches!(payload.action, IssuesEventAction::Closed) {
-                    continue;
-                }
-            }
-            Some(EventPayload::PushEvent(_)) => {}
-            _ => continue,
-        }
 
         if current_day.as_ref() != Some(&event.key) {
             current_day = Some(event.key.clone());
@@ -169,21 +162,32 @@ async fn handler(
             .or_insert_with(|| ActiveRepository {
                 url: format!(
                     "https://github.com/{}",
-                    forked_repo.unwrap_or(&github_event.repo.name)
+                    forked_repo.unwrap_or(&github_event.repository.name)
                 ),
                 forked_from: forked_repo.map(|r| r.to_string()),
                 ..ActiveRepository::default()
             });
-        match &github_event.payload {
-            Some(EventPayload::IssuesEvent(closed_issue)) => {
+
+        match github_event.kind.as_str() {
+            "IssuesEvent" => {
+                let payload =
+                    serde_json::value::from_value::<IssuesPayload>(github_event.payload.clone())
+                        .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?;
+                if payload.action == "closed" {
+                    continue;
+                }
+
                 repository.issues_closed.push(ClosedIssue {
-                    id: closed_issue.issue.number,
+                    id: payload.issue.number,
                     author: github_event.actor.login.clone(),
-                    url: closed_issue.issue.html_url.to_string(),
-                    title: closed_issue.issue.title.clone(),
-                })
+                    url: payload.issue.html_url.to_string(),
+                    title: payload.issue.title.clone(),
+                });
             }
-            Some(EventPayload::PushEvent(push)) => {
+            "PushEvent" => {
+                let push =
+                    serde_json::value::from_value::<PushPayload>(github_event.payload.clone())
+                        .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?;
                 for commit in &push.commits {
                     if forked_repo.is_none()
                         || CONTRIBUTOR_EMAILS.contains(&commit.author.email.as_str())
@@ -193,17 +197,34 @@ async fn handler(
                             .entry(github_event.actor.login.clone())
                             .or_default();
                         repository
-                            .entry(push.r#ref.split('/').last().unwrap().to_string())
+                            .entry(push.reference.split('/').last().unwrap().to_string())
                             .and_modify(|count| *count += 1)
                             .or_insert(1);
                     }
                 }
             }
-            _ => unreachable!(),
+            "ReleaseEvent" => {
+                let event =
+                    serde_json::value::from_value::<ReleasePayload>(github_event.payload.clone())
+                        .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?;
+                if event.release.draft {
+                    continue;
+                }
+
+                repository.releases.push(event.release);
+            }
+
+            _ => continue,
         }
     }
 
     days.reverse();
+    for day in &mut days {
+        day.repositories.retain(|_key, value| {
+            !value.issues_closed.is_empty() || !value.commit_authors.is_empty()
+        });
+    }
+    days.retain(|d| !d.repositories.is_empty());
 
     let mut context = Context::new();
     context.insert("days", &days);
@@ -226,11 +247,12 @@ pub struct ActiveRepository {
     pub forked_from: Option<String>,
     pub commit_authors: HashMap<String, HashMap<String, usize>>,
     pub issues_closed: Vec<ClosedIssue>,
+    pub releases: Vec<Release>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ClosedIssue {
-    pub id: i64,
+    pub id: u64,
     pub author: String,
     pub url: String,
     pub title: String,

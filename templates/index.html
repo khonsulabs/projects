@@ -20,42 +20,61 @@
     {% for day in days %}
     <h3 class="text-center">{{ day.display }}</h3>
     {% for repository, summary in day.repositories %}
-    <h4>
-        {% if summary.forked_from %}
-        {{ summary.forked_from }} (forked)
-        {% else %}
-        {{ repository }}
-        {% endif %}
-        {% if projects[repository] %}
-        <a data-bs-toggle="modal" data-bs-target="#{{repository}}" href="#">
-            <i class="bi bi-info-circle-fill"></i>
-        </a>
-        {% endif %}
-        <a href="{{ summary.url }}">
-            <i class="bi bi-github"></i>
-        </a>
-    </h4>
+    <div class="container">
+        <h4>
+            {% if summary.forked_from %}
+            {{ summary.forked_from }} (forked)
+            {% else %}
+            {{ repository }}
+            {% endif %}
+            {% if projects[repository] %}
+            <a data-bs-toggle="modal" data-bs-target="#{{repository}}" href="#">
+                <i class="bi bi-info-circle-fill"></i>
+            </a>
+            {% endif %}
+            <a href="{{ summary.url }}">
+                <i class="bi bi-github"></i>
+            </a>
+        </h4>
 
-    {% for issue in summary.issues_closed %}
-    <p>
-        <img src="/static/checkmark-circle.svg" class="icon" /> Issue <a href="{{ issue.url }}">#{{ issue.id
-            }}</a>
-        was closed:
-        {{issue.title}}
-    </p>
-    {% endfor %}
+        <div class="container">
+            {% for release in summary.releases %}
+            <p>
+                {% if release.prerelease %}
+                <i class="bi bi-cone-striped"></i>
+                {% else %}
+                <i class="bi bi-truck"></i>
+                {% endif %}
 
-    {% for login, head in summary.commit_authors %}
-    {% for head, count in head %}
-    <p>
-        <img src="/static/github-original.svg" class="icon" />
-        <a href="https://github.com/{{login}}">@{{login}}</a>
-        pushed <a href="https://github.com/khonsulabs/{{ repository }}/commits/{{head}}?author={{ login }}">
-            to branch <code>{{head}}</code>.</a>
-    </p>
+                <a href="{{ release.html_url }}">{{ release.name }}</a> was released.
+            </p>
+            <blockquote class="ps-4">
+                {{ release.short_description_html | safe }}
+            </blockquote>
+            {% endfor %}
 
-    {% endfor %}
-    {% endfor %}
+            {% for issue in summary.issues_closed %}
+            <p>
+                <i class="bi bi-check2-square"></i> Issue <a href="{{ issue.url }}">#{{ issue.id
+                    }}</a>
+                was closed:
+                {{issue.title}}
+            </p>
+            {% endfor %}
+
+            {% for login, head in summary.commit_authors %}
+            {% for head, count in head %}
+            <p>
+                <i class="bi bi-cloud-upload-fill"></i>
+                <a href="https://github.com/{{login}}">@{{login}}</a>
+                pushed <a href="https://github.com/khonsulabs/{{ repository }}/commits/{{head}}?author={{ login }}">
+                    to branch <code>{{head}}</code>.</a>
+            </p>
+
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
     {% endfor %}
     <hr />
     {% endfor %}
