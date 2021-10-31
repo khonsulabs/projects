@@ -50,7 +50,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-          name: my-artifact
+          name: khonsulabs-projects
       
       - name: Deploy 
         run: |
