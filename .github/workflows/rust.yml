@@ -55,7 +55,7 @@ jobs:
       - name: Deploy 
         run: |
           mkdir release
-          cp target/release/khonsulabs-projects release/
+          mv khonsulabs-projects release/
           cp -r static/ release/
           cp -r templates release/ 
           rsync -avz release/ projects@khonsulabs.com:projects/
