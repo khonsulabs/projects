@@ -1,0 +1,62 @@
+name: Deploy
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v1
+
+      - name: Build tests
+        run: |
+          cargo test --all-features --no-run
+
+      - name: Run unit tests
+        run: |
+          cargo test --all-features
+        env:
+          RUST_BACKTRACE: 1
+
+  package:
+    runs-on: ubuntu-latest
+    environment: Production
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v1
+
+      - name: Build 
+        run: |
+          cargo build --bin khonsulabs-projects --release
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: khonsulabs-projects
+          path: target/release/khonsulabs-projects
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: Production
+    timeout-minutes: 30
+    needs: [package, test]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: my-artifact
+      
+      - name: Deploy 
+        run: |
+          mkdir release
+          cp target/release/khonsulabs-projects release/
+          cp -r static/ release/
+          cp -r templates release/ 
+          rsync -avz release/ projects@khonsulabs.com:projects/
+          ssh projects@khonsulabs.com sudo /usr/bin/systemctl restart projects.service
