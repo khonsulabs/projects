@@ -5,6 +5,7 @@ use bonsaidb::{
 
 use crate::schema::Projects;
 
+mod projects;
 mod schema;
 mod updater;
 mod webserver;

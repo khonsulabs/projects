@@ -56,7 +56,7 @@
 
                     <a href="{{ release.html_url }}">{{ release.name }}</a> was released.
                 </p>
-                <blockquote class="ps-4">
+                <blockquote class="release ps-4">
                     {{ release.short_description_html | safe }}
                 </blockquote>
                 {% endfor %}
@@ -110,9 +110,11 @@
                     {% endif %}
                     <a href="{{ project.repository }}" class="btn btn-outline-primary">
                         <i class="bi bi-github"></i> Source Code</a>
+                    {% if project.documentation %}
                     <a href="{{ project.documentation }}" class="btn btn-outline-primary"><i
                             class="bi bi-journal-code"></i>
                         Documentation</a>
+                    {% endif %}
                 </div>
             </div>
             <div class="modal-footer">
