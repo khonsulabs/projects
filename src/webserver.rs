@@ -33,7 +33,7 @@ pub async fn serve(database: Database<Projects>) -> anyhow::Result<()> {
 
     // build our application with a route
     let app = Router::new()
-        .route("/", get(handler))
+        .route("/", get(index_handler))
         .or(
             service::get(ServeDir::new("./static")).handle_error(|error: std::io::Error| {
                 Ok::<_, Infallible>((
@@ -54,16 +54,24 @@ pub async fn serve(database: Database<Projects>) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn handler(
+async fn index_handler(
     templates: extract::Extension<Arc<Tera>>,
     database: extract::Extension<Database<Projects>>,
 ) -> Result<Html<String>, (StatusCode, String)> {
+    index(templates, database)
+        .await
+        .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))
+}
+
+async fn index(
+    templates: extract::Extension<Arc<Tera>>,
+    database: extract::Extension<Database<Projects>>,
+) -> Result<Html<String>, anyhow::Error> {
     // While debugging, reload the templates always.
     #[cfg(debug_assertions)]
     let templates = {
         drop(templates);
-        Tera::new("templates/**/*")
-            .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?
+        Tera::new("templates/**/*")?
     };
 
     let now = Utc::now();
@@ -75,15 +83,11 @@ async fn handler(
             one_month_ago.format("%Y-%m-%d").to_string()..tomorrow.format("%Y-%m-%d").to_string(),
         )
         .query_with_docs()
-        .await
-        .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?;
+        .await?;
     let mut days = Vec::new();
     let mut current_day = None;
     for event in events {
-        let github_event = event
-            .document
-            .contents::<Event>()
-            .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?;
+        let github_event = event.document.contents::<Event>()?;
 
         // Ignore all events from github actions
         if github_event.actor.login == "github-actions[bot]" {
@@ -121,8 +125,7 @@ async fn handler(
         match github_event.kind.as_str() {
             "IssuesEvent" => {
                 let payload =
-                    serde_json::value::from_value::<IssuesPayload>(github_event.payload.clone())
-                        .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?;
+                    serde_json::value::from_value::<IssuesPayload>(github_event.payload.clone())?;
                 if payload.action != "closed" {
                     continue;
                 }
@@ -136,8 +139,7 @@ async fn handler(
             }
             "PushEvent" => {
                 let push =
-                    serde_json::value::from_value::<PushPayload>(github_event.payload.clone())
-                        .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?;
+                    serde_json::value::from_value::<PushPayload>(github_event.payload.clone())?;
                 for commit in &push.commits {
                     if forked_repo.is_none()
                         || CONTRIBUTOR_EMAILS.contains(&commit.author.email.as_str())
@@ -155,8 +157,7 @@ async fn handler(
             }
             "ReleaseEvent" => {
                 let event =
-                    serde_json::value::from_value::<ReleasePayload>(github_event.payload.clone())
-                        .map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?;
+                    serde_json::value::from_value::<ReleasePayload>(github_event.payload.clone())?;
                 if event.release.draft {
                     continue;
                 }
@@ -179,9 +180,7 @@ async fn handler(
     let mut context = Context::new();
     context.insert("days", &days);
     context.insert("projects", &*PROJECTS);
-    Ok(Html(templates.render("index.html", &context).map_err(
-        |err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
-    )?))
+    Ok(Html(templates.render("index.html", &context)?))
 }
 
 #[derive(Serialize, Deserialize, Debug)]
