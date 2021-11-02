@@ -1,6 +1,12 @@
+use std::env;
+
 use bonsaidb::{
     core::connection::ServerConnection,
-    local::{config::Configuration, Storage},
+    keystorage::s3::{
+        s3::{creds::Credentials, Bucket, Region},
+        S3VaultKeyStorage,
+    },
+    local::{config::Configuration, vault::AnyVaultKeyStorage, Storage},
 };
 
 use crate::schema::Projects;
@@ -21,7 +27,36 @@ async fn main() -> anyhow::Result<()> {
         // .with_span_events(FmtSpan::ENTER)
         // sets this to be the default, global collector for this application.
         .init();
-    let storage = Storage::open_local("projects.bonsaidb", Configuration::default()).await?;
+
+    let vault_key_storage = if let Ok(bucket) = env::var("VAULT_S3_BUCKET") {
+        Some(Box::new(
+            S3VaultKeyStorage::from(Bucket::new(
+                &bucket,
+                Region::Custom {
+                    region: String::default(),
+                    endpoint: env::var("VAULT_S3_ENDPOINT")?,
+                },
+                Credentials::new(
+                    Some(&env::var("VAULT_S3_KEY_ID")?),
+                    Some(&env::var("VAULT_S3_SECRET_KEY")?),
+                    None,
+                    None,
+                    None,
+                )?,
+            )?)
+            .path(env::var("VAULT_S3_PATH")?),
+        ) as Box<dyn AnyVaultKeyStorage>)
+    } else {
+        None
+    };
+    let storage = Storage::open_local(
+        "projects.bonsaidb",
+        Configuration {
+            vault_key_storage,
+            ..Configuration::default()
+        },
+    )
+    .await?;
     storage.register_schema::<Projects>().await?;
     storage
         .create_database::<Projects>("projects", true)

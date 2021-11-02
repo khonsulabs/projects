@@ -8,13 +8,17 @@ edition = "2021"
 [dependencies]
 structopt = "0.3"
 axum = "0.2"
-reqwest = { version = "0.11", default-features = false, features = ["rustls-tls-native-roots", "json"] }
+reqwest = { version = "0.11", default-features = false, features = [
+    "rustls-tls-native-roots",
+    "json",
+] }
 tokio = { version = "1", features = ["full"] }
-anyhow = "1"
+anyhow = { version = "1", features = ["backtrace"] }
 bonsaidb = { git = "https://github.com/khonsulabs/bonsaidb.git", branch = "main", features = [
     "local",
     "local-tracing",
     "json",
+    "keystorage-s3",
 ] }
 tracing = "0.1"
 tracing-subscriber = "0.3"
