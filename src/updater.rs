@@ -12,12 +12,12 @@ use reqwest::{
     Client,
 };
 
-use crate::schema::{Event, GithubEventById, Projects};
+use crate::schema::{Event, GitHubEventById, Projects};
 
 pub async fn update_events_periodically(storage: Database<Projects>) -> anyhow::Result<()> {
     let instance = Client::new();
     loop {
-        tracing::info!("Fetching new events from Github");
+        tracing::info!("Fetching new events from GitHub");
         fetch_new_events(&storage, &instance).await?;
         tracing::info!("Sleeping");
         tokio::time::sleep(Duration::from_secs(300)).await;
@@ -56,7 +56,7 @@ async fn fetch_new_events(database: &Database<Projects>, client: &Client) -> any
             )
         }) {
             if database
-                .query::<GithubEventById>(
+                .query::<GitHubEventById>(
                     Some(QueryKey::Matches(event.id.clone())),
                     AccessPolicy::UpdateBefore,
                 )

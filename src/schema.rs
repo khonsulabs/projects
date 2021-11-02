@@ -56,8 +56,8 @@ impl Collection for Event {
     }
 
     fn define_views(schema: &mut Schematic) -> Result<(), bonsaidb::core::Error> {
-        schema.define_view(GithubEventById)?;
-        schema.define_view(GithubEventByDate)?;
+        schema.define_view(GitHubEventById)?;
+        schema.define_view(GitHubEventByDate)?;
         Ok(())
     }
 
@@ -67,9 +67,9 @@ impl Collection for Event {
 }
 
 #[derive(Debug)]
-pub struct GithubEventById;
+pub struct GitHubEventById;
 
-impl View for GithubEventById {
+impl View for GitHubEventById {
     type Collection = Event;
     type Key = String;
     type Value = ();
@@ -92,9 +92,9 @@ impl View for GithubEventById {
 }
 
 #[derive(Debug)]
-pub struct GithubEventByDate;
+pub struct GitHubEventByDate;
 
-impl View for GithubEventByDate {
+impl View for GitHubEventByDate {
     type Collection = Event;
     type Key = String;
     type Value = ();

@@ -166,7 +166,7 @@ const PROJECTS_PROJECT: Project = Project {
     name: "projects",
     tagline: "The website you're accessing.",
     description: r#"
-        <p>The website you are browsing is served via the Axum framework. The Github history is being retrieved from a local BonsaiDb database, which is updated in the background periodically. The goal of this website is to try to help tie together all of the work that we are doing into one location. Because we are only a few developers with such a large set of repositories, it will likely be that some crates go periods of time without updates.
+        <p>The website you are browsing is served via the Axum framework. The GitHub history is being retrieved from a local BonsaiDb database, which is updated in the background periodically. The goal of this website is to try to help tie together all of the work that we are doing into one location. Because we are only a few developers with such a large set of repositories, it will likely be that some crates go periods of time without updates.
         <p>This website should help any consumers of Khonsu Labs' crates to see that each crate plays an important role in our ecosystem. As long as we're working towards our big-picture goals, each one of our crates is crucial to the success of our goals.
         <p>A fun note: This project will likely be BonsaiDb's longest-running production application.
     "#,

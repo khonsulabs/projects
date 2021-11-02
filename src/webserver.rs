@@ -11,7 +11,7 @@ use tower_http::services::ServeDir;
 use crate::{
     projects::PROJECTS,
     schema::{
-        Event, GithubEventByDate, IssuesPayload, Projects, PushPayload, Release, ReleasePayload,
+        Event, GitHubEventByDate, IssuesPayload, Projects, PushPayload, Release, ReleasePayload,
     },
 };
 
@@ -78,7 +78,7 @@ async fn index(
     let tomorrow = now + Duration::days(1);
     let one_month_ago = now - Duration::weeks(4);
     let events = database
-        .view::<GithubEventByDate>()
+        .view::<GitHubEventByDate>()
         .with_key_range(
             one_month_ago.format("%Y-%m-%d").to_string()..tomorrow.format("%Y-%m-%d").to_string(),
         )
