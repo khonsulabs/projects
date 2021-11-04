@@ -89,8 +89,8 @@ async fn index(
     for event in events {
         let github_event = event.document.contents::<Event>()?;
 
-        // Ignore all events from github actions
-        if github_event.actor.login == "github-actions[bot]" {
+        // Ignore all events from bot actors
+        if github_event.actor.login.ends_with("[bot]") {
             continue;
         }
 

@@ -125,9 +125,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.44"
+version = "1.0.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61604a8f862e1d5c3229fdd78f8b02c68dcf73a4c4b05fd636d12240aaa242c1"
+checksum = "ee10e43ae4a853c0a3591d4e2ada1719e553be18199d9da9d4a83f5927c2f5c7"
 dependencies = [
  "backtrace",
 ]
@@ -371,7 +371,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb"
 version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#56fc6b8e0977bd327dcb06bb100413b3747fe44a"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#6588e3b110b1c3bf2a1fde652b3128c90cd80d75"
 dependencies = [
  "bonsaidb-core",
  "bonsaidb-keystorage-s3",
@@ -381,7 +381,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-core"
 version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#56fc6b8e0977bd327dcb06bb100413b3747fe44a"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#6588e3b110b1c3bf2a1fde652b3128c90cd80d75"
 dependencies = [
  "actionable",
  "async-trait",
@@ -400,7 +400,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-keystorage-s3"
 version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#56fc6b8e0977bd327dcb06bb100413b3747fe44a"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#6588e3b110b1c3bf2a1fde652b3128c90cd80d75"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -411,7 +411,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-local"
 version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#56fc6b8e0977bd327dcb06bb100413b3747fe44a"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#6588e3b110b1c3bf2a1fde652b3128c90cd80d75"
 dependencies = [
  "async-trait",
  "bincode",
@@ -440,7 +440,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-macros"
 version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#56fc6b8e0977bd327dcb06bb100413b3747fe44a"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#6588e3b110b1c3bf2a1fde652b3128c90cd80d75"
 dependencies = [
  "proc-macro-error",
  "quote",
@@ -590,7 +590,7 @@ dependencies = [
 [[package]]
 name = "circulate"
 version = "0.1.0"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#56fc6b8e0977bd327dcb06bb100413b3747fe44a"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#6588e3b110b1c3bf2a1fde652b3128c90cd80d75"
 dependencies = [
  "async-lock",
  "flume",
@@ -2499,9 +2499,9 @@ dependencies = [
 
 [[package]]
 name = "tera"
-version = "1.14.0"
+version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e7f3fd1bd7e48ef73d9e9124caedee3e1c645657ec876a50a278c8d0555d9da"
+checksum = "d3cac831b615c25bcef632d1cabf864fa05813baad3d526829db18eb70e8b58d"
 dependencies = [
  "chrono",
  "chrono-tz",
