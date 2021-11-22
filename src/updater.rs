@@ -1,10 +1,7 @@
 use std::time::Duration;
 
 use bonsaidb::{
-    core::{
-        connection::{AccessPolicy, Connection, QueryKey},
-        schema::Collection,
-    },
+    core::{connection::Connection, schema::Collection},
     local::Database,
 };
 use reqwest::{
@@ -12,9 +9,9 @@ use reqwest::{
     Client,
 };
 
-use crate::schema::{Event, GitHubEventById, Projects};
+use crate::schema::{Event, GitHubEventById};
 
-pub async fn update_events_periodically(storage: Database<Projects>) -> anyhow::Result<()> {
+pub async fn update_events_periodically(storage: Database) -> anyhow::Result<()> {
     let instance = Client::new();
     loop {
         tracing::info!("Fetching new events from GitHub");
@@ -24,7 +21,7 @@ pub async fn update_events_periodically(storage: Database<Projects>) -> anyhow::
     }
 }
 
-async fn fetch_new_events(database: &Database<Projects>, client: &Client) -> anyhow::Result<()> {
+async fn fetch_new_events(database: &Database, client: &Client) -> anyhow::Result<()> {
     let mut events_to_process = Vec::new();
 
     // Loop and gather all the vents we need to insert, potentially across multiple pages.
@@ -56,10 +53,9 @@ async fn fetch_new_events(database: &Database<Projects>, client: &Client) -> any
             )
         }) {
             if database
-                .query::<GitHubEventById>(
-                    Some(QueryKey::Matches(event.id.clone())),
-                    AccessPolicy::UpdateBefore,
-                )
+                .view::<GitHubEventById>()
+                .with_key(event.id.clone())
+                .query()
                 .await
                 .unwrap()
                 .is_empty()

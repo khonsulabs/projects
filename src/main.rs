@@ -1,7 +1,7 @@
 use std::env;
 
 use bonsaidb::{
-    core::connection::ServerConnection,
+    core::connection::StorageConnection,
     keystorage::s3::{
         s3::{creds::Credentials, Bucket, Region},
         S3VaultKeyStorage,
@@ -61,7 +61,7 @@ async fn main() -> anyhow::Result<()> {
     storage
         .create_database::<Projects>("projects", true)
         .await?;
-    let database = storage.database("projects").await?;
+    let database = storage.database::<Projects>("projects").await?;
 
     let task_database = database.clone();
     let updater = tokio::spawn(async move {

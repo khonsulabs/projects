@@ -7,7 +7,7 @@ publish = false
 
 [dependencies]
 structopt = "0.3"
-axum = "0.2"
+axum = "0.3"
 reqwest = { version = "0.11", default-features = false, features = [
     "rustls-tls-native-roots",
     "json",
@@ -16,7 +16,8 @@ tokio = { version = "1", features = ["full"] }
 anyhow = { version = "1", features = ["backtrace"] }
 bonsaidb = { git = "https://github.com/khonsulabs/bonsaidb.git", branch = "main", features = [
     "local",
-    "local-tracing",
+    "local-instrument",
+    "local-encryption",
     "json",
     "keystorage-s3",
 ] }

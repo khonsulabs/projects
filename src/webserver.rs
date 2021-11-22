@@ -1,6 +1,6 @@
 use std::{collections::HashMap, convert::Infallible, net::SocketAddr, sync::Arc};
 
-use axum::{extract, handler::get, response::Html, service, AddExtensionLayer, Router};
+use axum::{error_handling::HandleErrorExt, extract, response::Html, AddExtensionLayer, Router};
 use bonsaidb::{core::connection::Connection, local::Database};
 use chrono::{Duration, Utc};
 use http::StatusCode;
@@ -10,9 +10,7 @@ use tower_http::services::ServeDir;
 
 use crate::{
     projects::PROJECTS,
-    schema::{
-        Event, GitHubEventByDate, IssuesPayload, Projects, PushPayload, Release, ReleasePayload,
-    },
+    schema::{Event, GitHubEventByDate, IssuesPayload, PushPayload, Release, ReleasePayload},
 };
 
 const CONTRIBUTOR_EMAILS: [&str; 2] = ["jon@khonsulabs.com", "daxpedda@gmail.com"];
@@ -26,21 +24,23 @@ const FORKED_REPOSITORIES: [&str; 7] = [
     "ModProg/derive-restricted",
 ];
 
-pub async fn serve(database: Database<Projects>) -> anyhow::Result<()> {
+pub async fn serve(database: Database) -> anyhow::Result<()> {
     let templates = Tera::new("templates/**/*")?;
 
     let templates = Arc::new(templates);
 
     // build our application with a route
     let app = Router::new()
-        .route("/", get(index_handler))
-        .or(
-            service::get(ServeDir::new("./static")).handle_error(|error: std::io::Error| {
-                Ok::<_, Infallible>((
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    format!("Unhandled internal error: {}", error),
-                ))
-            }),
+        .route("/", axum::routing::get(index_handler))
+        .fallback(
+            axum::routing::service_method_routing::get(ServeDir::new("./static")).handle_error(
+                |error: std::io::Error| {
+                    Ok::<_, Infallible>((
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Unhandled internal error: {}", error),
+                    ))
+                },
+            ),
         )
         .layer(AddExtensionLayer::new(templates))
         .layer(AddExtensionLayer::new(database));
@@ -56,7 +56,7 @@ pub async fn serve(database: Database<Projects>) -> anyhow::Result<()> {
 
 async fn index_handler(
     templates: extract::Extension<Arc<Tera>>,
-    database: extract::Extension<Database<Projects>>,
+    database: extract::Extension<Database>,
 ) -> Result<Html<String>, (StatusCode, String)> {
     index(templates, database)
         .await
@@ -65,7 +65,7 @@ async fn index_handler(
 
 async fn index(
     templates: extract::Extension<Arc<Tera>>,
-    database: extract::Extension<Database<Projects>>,
+    database: extract::Extension<Database>,
 ) -> Result<Html<String>, anyhow::Error> {
     // While debugging, reload the templates always.
     #[cfg(debug_assertions)]
