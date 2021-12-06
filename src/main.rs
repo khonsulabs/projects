@@ -2,12 +2,10 @@ use std::env;
 
 use bonsaidb::{
     core::connection::StorageConnection,
-    keystorage::s3::{
-        s3::{creds::Credentials, Bucket, Region},
-        S3VaultKeyStorage,
-    },
+    keystorage::s3::{aws_sdk_s3::Endpoint, S3VaultKeyStorage},
     local::{config::Configuration, vault::AnyVaultKeyStorage, Storage},
 };
+use http::Uri;
 
 use crate::schema::Projects;
 
@@ -30,21 +28,11 @@ async fn main() -> anyhow::Result<()> {
 
     let vault_key_storage = if let Ok(bucket) = env::var("VAULT_S3_BUCKET") {
         Some(Box::new(
-            S3VaultKeyStorage::from(Bucket::new(
-                &bucket,
-                Region::Custom {
-                    region: String::default(),
-                    endpoint: env::var("VAULT_S3_ENDPOINT")?,
-                },
-                Credentials::new(
-                    Some(&env::var("VAULT_S3_KEY_ID")?),
-                    Some(&env::var("VAULT_S3_SECRET_KEY")?),
-                    None,
-                    None,
-                    None,
-                )?,
-            )?)
-            .path(env::var("VAULT_S3_PATH")?),
+            S3VaultKeyStorage::new(bucket)
+                .endpoint(Endpoint::immutable(Uri::try_from(env::var(
+                    "VAULT_S3_ENDPOINT",
+                )?)?))
+                .path(env::var("VAULT_S3_PATH")?),
         ) as Box<dyn AnyVaultKeyStorage>)
     } else {
         None
