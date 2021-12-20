@@ -1,6 +1,6 @@
 use std::{collections::HashMap, convert::Infallible, net::SocketAddr, sync::Arc};
 
-use axum::{error_handling::HandleErrorExt, extract, response::Html, AddExtensionLayer, Router};
+use axum::{extract, response::Html, AddExtensionLayer, Router};
 use bonsaidb::{core::connection::Connection, local::Database};
 use chrono::{Duration, Utc};
 use http::StatusCode;
@@ -33,8 +33,8 @@ pub async fn serve(database: Database) -> anyhow::Result<()> {
     let app = Router::new()
         .route("/", axum::routing::get(index_handler))
         .fallback(
-            axum::routing::service_method_routing::get(ServeDir::new("./static")).handle_error(
-                |error: std::io::Error| {
+            axum::routing::get_service(ServeDir::new("./static")).handle_error(
+                |error: std::io::Error| async move {
                     Ok::<_, Infallible>((
                         StatusCode::INTERNAL_SERVER_ERROR,
                         format!("Unhandled internal error: {}", error),

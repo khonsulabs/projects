@@ -87,7 +87,7 @@ impl View for GitHubEventById {
         document: &bonsaidb::core::document::Document<'_>,
     ) -> bonsaidb::core::schema::MapResult<Self::Key, Self::Value> {
         let event = document.contents::<Event>().unwrap();
-        Ok(vec![document.emit_key(event.id)])
+        Ok(document.emit_key(event.id))
     }
 }
 
@@ -112,9 +112,7 @@ impl View for GitHubEventByDate {
         document: &bonsaidb::core::document::Document<'_>,
     ) -> bonsaidb::core::schema::MapResult<Self::Key, Self::Value> {
         let event = document.contents::<Event>().unwrap();
-        Ok(vec![
-            document.emit_key(event.created_at.format("%Y-%m-%d").to_string())
-        ])
+        Ok(document.emit_key(event.created_at.format("%Y-%m-%d").to_string()))
     }
 }
 
