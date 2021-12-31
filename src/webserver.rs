@@ -7,6 +7,7 @@ use http::StatusCode;
 use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
 use tower_http::services::ServeDir;
+use transmog_json::serde_json;
 
 use crate::{
     projects::PROJECTS,

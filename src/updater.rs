@@ -1,13 +1,14 @@
 use std::time::Duration;
 
 use bonsaidb::{
-    core::{connection::Connection, schema::Collection},
+    core::{connection::Connection, schema::SerializedCollection},
     local::Database,
 };
 use reqwest::{
     header::{ACCEPT, USER_AGENT},
     Client,
 };
+use transmog_json::serde_json;
 
 use crate::schema::{Event, GitHubEventById};
 
@@ -70,7 +71,7 @@ async fn fetch_new_events(database: &Database, client: &Client) -> anyhow::Resul
     tracing::info!("Received {} events", events_to_process.len());
     for event in events_to_process {
         tracing::debug!("Inserting event {:?}", event);
-        event.insert_into(database).await?;
+        event.push_into(database).await?;
     }
 
     Ok(())

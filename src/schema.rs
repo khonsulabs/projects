@@ -1,11 +1,11 @@
 use async_trait::async_trait;
 use bonsaidb::core::schema::{
-    Collection, CollectionName, CollectionSerializer, InvalidNameError, Name, Schema, SchemaName,
-    Schematic, View,
+    Collection, CollectionName, InvalidNameError, Name, Schema, SchemaName, Schematic,
+    SerializedCollection, View,
 };
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use transmog_json::{serde_json::Value, Json};
 
 #[derive(Debug)]
 pub struct Projects;
@@ -60,9 +60,14 @@ impl Collection for Event {
         schema.define_view(GitHubEventByDate)?;
         Ok(())
     }
+}
 
-    fn serializer() -> CollectionSerializer {
-        CollectionSerializer::Json
+impl SerializedCollection for Event {
+    type Contents = Self;
+    type Format = Json;
+
+    fn format() -> Self::Format {
+        Json::default()
     }
 }
 
