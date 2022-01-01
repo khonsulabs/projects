@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use bonsaidb::core::schema::{
-    Collection, CollectionName, InvalidNameError, Name, Schema, SchemaName, Schematic,
-    SerializedCollection, View,
+    Collection, CollectionName, DefaultViewSerialization, InvalidNameError, Name, Schema,
+    SchemaName, Schematic, SerializedCollection, View,
 };
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -96,6 +96,8 @@ impl View for GitHubEventById {
     }
 }
 
+impl DefaultViewSerialization for GitHubEventById {}
+
 #[derive(Debug)]
 pub struct GitHubEventByDate;
 
@@ -120,6 +122,8 @@ impl View for GitHubEventByDate {
         Ok(document.emit_key(event.created_at.format("%Y-%m-%d").to_string()))
     }
 }
+
+impl DefaultViewSerialization for GitHubEventByDate {}
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct PushPayload {
