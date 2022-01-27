@@ -1,7 +1,10 @@
 use async_trait::async_trait;
-use bonsaidb::core::schema::{
-    Collection, CollectionName, DefaultViewSerialization, InvalidNameError, Name, Schema,
-    SchemaName, Schematic, SerializedCollection, View,
+use bonsaidb::core::{
+    document::{BorrowedDocument, Document},
+    schema::{
+        Collection, CollectionName, DefaultViewSerialization, Name, Schema, SchemaName, Schematic,
+        SerializedCollection, View, ViewMapResult, ViewSchema,
+    },
 };
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -11,7 +14,7 @@ use transmog_json::{serde_json::Value, Json};
 pub struct Projects;
 
 impl Schema for Projects {
-    fn schema_name() -> Result<SchemaName, InvalidNameError> {
+    fn schema_name() -> SchemaName {
         SchemaName::new("khonsulabs", "projects")
     }
 
@@ -51,7 +54,7 @@ pub struct Repository {
 
 #[async_trait]
 impl Collection for Event {
-    fn collection_name() -> Result<CollectionName, InvalidNameError> {
+    fn collection_name() -> CollectionName {
         CollectionName::new("khonsulabs", "github-events")
     }
 
@@ -71,7 +74,7 @@ impl SerializedCollection for Event {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GitHubEventById;
 
 impl View for GitHubEventById {
@@ -79,18 +82,14 @@ impl View for GitHubEventById {
     type Key = String;
     type Value = ();
 
-    fn version(&self) -> u64 {
-        0
-    }
-
-    fn name(&self) -> Result<Name, InvalidNameError> {
+    fn name(&self) -> Name {
         Name::new("by-id")
     }
+}
 
-    fn map(
-        &self,
-        document: &bonsaidb::core::document::Document,
-    ) -> bonsaidb::core::schema::MapResult<Self::Key, Self::Value> {
+impl ViewSchema for GitHubEventById {
+    type View = Self;
+    fn map(&self, document: &BorrowedDocument<'_>) -> ViewMapResult<Self> {
         let event = document.contents::<Event>().unwrap();
         Ok(document.emit_key(event.id))
     }
@@ -98,7 +97,7 @@ impl View for GitHubEventById {
 
 impl DefaultViewSerialization for GitHubEventById {}
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GitHubEventByDate;
 
 impl View for GitHubEventByDate {
@@ -106,18 +105,14 @@ impl View for GitHubEventByDate {
     type Key = String;
     type Value = ();
 
-    fn version(&self) -> u64 {
-        0
-    }
-
-    fn name(&self) -> Result<Name, InvalidNameError> {
+    fn name(&self) -> Name {
         Name::new("by-date")
     }
+}
 
-    fn map(
-        &self,
-        document: &bonsaidb::core::document::Document,
-    ) -> bonsaidb::core::schema::MapResult<Self::Key, Self::Value> {
+impl ViewSchema for GitHubEventByDate {
+    type View = Self;
+    fn map(&self, document: &BorrowedDocument<'_>) -> ViewMapResult<Self> {
         let event = document.contents::<Event>().unwrap();
         Ok(document.emit_key(event.created_at.format("%Y-%m-%d").to_string()))
     }

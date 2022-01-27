@@ -1,7 +1,10 @@
 use std::{collections::HashMap, convert::Infallible, net::SocketAddr, sync::Arc};
 
 use axum::{extract, response::Html, AddExtensionLayer, Router};
-use bonsaidb::{core::connection::Connection, local::Database};
+use bonsaidb::{
+    core::{connection::Connection, document::Document},
+    local::Database,
+};
 use chrono::{Duration, Utc};
 use http::StatusCode;
 use serde::{Deserialize, Serialize};
