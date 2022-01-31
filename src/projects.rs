@@ -30,7 +30,7 @@ const BONSAIDB: Project = Project {
     "#,
     homepage: Some("https://bonsaidb.io/"),
     repository: "https://github.com/khonsulabs/bonsaidb",
-    documentation: Some("https://dev.bonsaidb.io/main/bonsaidb"),
+    documentation: Some("https://dev.bonsaidb.io/release/bonsaidb"),
 };
 
 const CUSTODIAN: Project = Project {

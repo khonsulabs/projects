@@ -4,9 +4,9 @@ version = 3
 
 [[package]]
 name = "actionable"
-version = "0.1.0-rc.3"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b14796024433dda1fd2fbaa0ce0a4c641c600c3cc6bd71f06efae5f29b09e866"
+checksum = "72eaee0c03fba20b61c0285f3abb7b2065cf07a2177593691bb5ff85cfc76704"
 dependencies = [
  "actionable-macros",
  "async-trait",
@@ -16,9 +16,9 @@ dependencies = [
 
 [[package]]
 name = "actionable-macros"
-version = "0.1.0-rc.3"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9c9d83a172bafde82063c4988c10f167513642f3dda1a6d4ccbfb5596163013b"
+checksum = "49f05d621331aebd81cb9f39bffcacec0d7cc4b34ea3c5a9e07e94ecdf217f81"
 dependencies = [
  "darling",
  "ident_case",
@@ -512,9 +512,9 @@ dependencies = [
 
 [[package]]
 name = "backtrace"
-version = "0.3.63"
+version = "0.3.64"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "321629d8ba6513061f26707241fa9bc89524ff1cd7a915a97ef0c62c666ce1b6"
+checksum = "5e121dee8023ce33ab248d9ce1493df03c3b38a659b240096fcbd7048ff9c31f"
 dependencies = [
  "addr2line",
  "cc",
@@ -602,7 +602,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb"
 version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#61b6cde5e06f2f0d99178cdc390bc7dcdaca1095"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#66a55070c604c04c7d07ecd0d9e9dcbc31f1284d"
 dependencies = [
  "bonsaidb-core",
  "bonsaidb-keystorage-s3",
@@ -612,7 +612,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-core"
 version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#61b6cde5e06f2f0d99178cdc390bc7dcdaca1095"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#66a55070c604c04c7d07ecd0d9e9dcbc31f1284d"
 dependencies = [
  "actionable",
  "arc-bytes",
@@ -635,7 +635,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-keystorage-s3"
 version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#61b6cde5e06f2f0d99178cdc390bc7dcdaca1095"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#66a55070c604c04c7d07ecd0d9e9dcbc31f1284d"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -650,7 +650,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-local"
 version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#61b6cde5e06f2f0d99178cdc390bc7dcdaca1095"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#66a55070c604c04c7d07ecd0d9e9dcbc31f1284d"
 dependencies = [
  "async-lock",
  "async-trait",
@@ -672,6 +672,7 @@ dependencies = [
  "rand 0.8.4",
  "region",
  "serde",
+ "sysinfo",
  "thiserror",
  "tokio",
  "tracing",
@@ -682,7 +683,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-macros"
 version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#61b6cde5e06f2f0d99178cdc390bc7dcdaca1095"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#66a55070c604c04c7d07ecd0d9e9dcbc31f1284d"
 dependencies = [
  "proc-macro-error",
  "quote",
@@ -692,7 +693,7 @@ dependencies = [
 [[package]]
 name = "bonsaidb-utils"
 version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=main#61b6cde5e06f2f0d99178cdc390bc7dcdaca1095"
+source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#66a55070c604c04c7d07ecd0d9e9dcbc31f1284d"
 
 [[package]]
 name = "bstr"
@@ -1644,15 +1645,15 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.115"
+version = "0.2.116"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0a8d982fa7a96a000f6ec4cfe966de9703eccde29750df2bb8949da91b0e818d"
+checksum = "565dbd88872dbe4cc8a46e527f26483c1d1f7afa6b884a3bd6cd893d4f98da74"
 
 [[package]]
 name = "lock_api"
-version = "0.4.5"
+version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "712a4d093c9976e24e7dbca41db895dabcbac38eb5f4045393d17a95bdfb1109"
+checksum = "88943dd7ef4a2e5a4bfa2753aaab3013e34ce2533d1996fb18ef591e315e2b3b"
 dependencies = [
  "scopeguard",
 ]
@@ -1698,9 +1699,9 @@ checksum = "a3e378b66a060d48947b590737b30a1be76706c8dd7b8ba0f2fe3989c68a853f"
 
 [[package]]
 name = "matchit"
-version = "0.4.4"
+version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "58b6f41fdfbec185dd3dff58b51e323f5bc61692c0de38419a957b0dcfccca3c"
+checksum = "d316c11deb69b8d5df061aa9e214e48a757f618b9c4b3b01b00fe555e4b32128"
 
 [[package]]
 name = "md5"
@@ -1773,9 +1774,9 @@ dependencies = [
 
 [[package]]
 name = "nebari"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "24c75c71d578f8482633f1b35ab6978ae805a246dfba63b9fb8fcc7816658e87"
+checksum = "c190e1ef137ee00cdf16f29ee3e177fa03a46dd57bd059fe313c8778438fa8ae"
 dependencies = [
  "arc-bytes",
  "backtrace",
@@ -2414,9 +2415,9 @@ dependencies = [
 
 [[package]]
 name = "security-framework"
-version = "2.5.0"
+version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d09d3c15d814eda1d6a836f2f2b56a6abc1446c8a34351cb3180d3db92ffe4ce"
+checksum = "3fed7948b6c68acbb6e20c334f55ad635dc0f75506963de4464289fbd3b051ac"
 dependencies = [
  "bitflags",
  "core-foundation",
@@ -2427,9 +2428,9 @@ dependencies = [
 
 [[package]]
 name = "security-framework-sys"
-version = "2.5.0"
+version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e90dd10c41c6bfc633da6e0c659bd25d31e0791e5974ac42970267d59eba87f7"
+checksum = "a57321bf8bc2362081b2599912d2961fe899c0efadf1b4b2f8d48b3e253bb96c"
 dependencies = [
  "core-foundation-sys",
  "libc",
@@ -2651,6 +2652,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "sysinfo"
+version = "0.23.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9e757000a4bed2b1be9be65a3f418b9696adf30bb419214c73997422de73a591"
+dependencies = [
+ "cfg-if",
+ "core-foundation-sys",
+ "libc",
+ "ntapi",
+ "once_cell",
+ "winapi",
+]
+
+[[package]]
 name = "tera"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2747,9 +2762,9 @@ checksum = "cda74da7e1a664f795bb1f8a87ec406fb89a02522cf6e50620d016add6dbbf5c"
 
 [[package]]
 name = "tokio"
-version = "1.15.0"
+version = "1.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fbbf1c778ec206785635ce8ad57fe52b3009ae9e0c9f574a728f3049d3e55838"
+checksum = "0c27a64b625de6d309e8c57716ba93021dccf1b3b5c97edd6d3dd2d2135afc0a"
 dependencies = [
  "bytes",
  "libc",
