@@ -90,7 +90,7 @@ async fn index(
         .await?;
     let mut days = Vec::new();
     let mut current_day = None;
-    for event in events {
+    for event in &events {
         let github_event = event.document.contents::<Event>()?;
 
         // Ignore all events from bot actors
@@ -105,7 +105,7 @@ async fn index(
             .find(|repo| repo.split('/').nth(1).unwrap() == local_repository_name);
 
         if current_day.as_ref() != Some(&event.key) {
-            current_day = Some(event.key.clone());
+            current_day = Some(event.key);
             days.push(DayEvents {
                 display: github_event.created_at.format("%A, %B %e, %Y").to_string(),
                 repositories: HashMap::new(),
