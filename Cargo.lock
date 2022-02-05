@@ -590,9 +590,9 @@ dependencies = [
 
 [[package]]
 name = "block-buffer"
-version = "0.10.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1d36a02058e76b040de25a4464ba1c80935655595b661505c8b39b664828b95"
+checksum = "03588e54c62ae6d763e2a80090d50353b785795361b4ff5b3bf0a5097fc31c0b"
 dependencies = [
  "generic-array 0.14.5",
 ]
@@ -608,8 +608,9 @@ dependencies = [
 
 [[package]]
 name = "bonsaidb"
-version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#c8698ae3097ae93c452a6246e9d8d8712d7a7144"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3141caf664d4a1357602c2cf824a61d25b3d1a73219f1b4318ecbe3eebfaadc4"
 dependencies = [
  "bonsaidb-core",
  "bonsaidb-keystorage-s3",
@@ -618,8 +619,9 @@ dependencies = [
 
 [[package]]
 name = "bonsaidb-core"
-version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#c8698ae3097ae93c452a6246e9d8d8712d7a7144"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "546beeb658b6eaf401087eb22fbe436ad6a1b0309f24383e35a72afc81b15024"
 dependencies = [
  "actionable",
  "arc-bytes",
@@ -641,8 +643,9 @@ dependencies = [
 
 [[package]]
 name = "bonsaidb-keystorage-s3"
-version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#c8698ae3097ae93c452a6246e9d8d8712d7a7144"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "00bc951d68c2b00544bcf7c7348bbf5ec949396677ec02715a0bda8c140e3a00"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -656,8 +659,9 @@ dependencies = [
 
 [[package]]
 name = "bonsaidb-local"
-version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#c8698ae3097ae93c452a6246e9d8d8712d7a7144"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1b0a742c5cce2c9b7b9d5f77295206e842abfb25d6eec8012755b4deb5ae31e7"
 dependencies = [
  "async-lock",
  "async-trait",
@@ -688,8 +692,9 @@ dependencies = [
 
 [[package]]
 name = "bonsaidb-macros"
-version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#c8698ae3097ae93c452a6246e9d8d8712d7a7144"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0dc1aafe48def5bc97bd5caf8f0cf137177301eae9618158782487369f034a14"
 dependencies = [
  "proc-macro-error",
  "quote",
@@ -698,8 +703,9 @@ dependencies = [
 
 [[package]]
 name = "bonsaidb-utils"
-version = "0.1.0-dev.4"
-source = "git+https://github.com/khonsulabs/bonsaidb.git?branch=release#c8698ae3097ae93c452a6246e9d8d8712d7a7144"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad98f8ccbd68578f36d2dab188c1d89314e2e9b32bbf79500e856b497b5d532e"
 
 [[package]]
 name = "bstr"
@@ -791,7 +797,7 @@ dependencies = [
  "num-integer",
  "num-traits",
  "serde",
- "time 0.1.43",
+ "time 0.1.44",
  "winapi",
 ]
 
@@ -1061,7 +1067,7 @@ version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b697d66081d42af4fba142d56918a3cb21dc8eb63372c6b85d14f44fb9c5979b"
 dependencies = [
- "block-buffer 0.10.0",
+ "block-buffer 0.10.1",
  "crypto-common",
  "generic-array 0.14.5",
  "subtle",
@@ -1898,9 +1904,9 @@ checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
 
 [[package]]
 name = "ordered-varint"
-version = "0.1.0-dev.1"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "619b760938788d8c87b84ef67aa4cf783476b47996a8b2fe4297740eb509011c"
+checksum = "5b0aecd1580577c0ecc89c57e7c8cf3cdc48d54a60f4339073c9d026ab1f1707"
 
 [[package]]
 name = "p256"
@@ -2131,9 +2137,9 @@ dependencies = [
 
 [[package]]
 name = "pot"
-version = "1.0.0-rc.4"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "951305d697019d73889ee75bb74b76d7ee09a927a0a6fcaee1954533e7bf317b"
+checksum = "dbd269bc42e5b201bea16cd99453fbe70d26514e45b61e9f4ec0abda13d9da01"
 dependencies = [
  "byteorder",
  "bytes",
@@ -2449,9 +2455,9 @@ dependencies = [
 
 [[package]]
 name = "security-framework"
-version = "2.6.0"
+version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fed7948b6c68acbb6e20c334f55ad635dc0f75506963de4464289fbd3b051ac"
+checksum = "2dc14f172faf8a0194a3aded622712b0de276821addc574fa54fc0a1167e10dc"
 dependencies = [
  "bitflags",
  "core-foundation",
@@ -2462,9 +2468,9 @@ dependencies = [
 
 [[package]]
 name = "security-framework-sys"
-version = "2.6.0"
+version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a57321bf8bc2362081b2599912d2961fe899c0efadf1b4b2f8d48b3e253bb96c"
+checksum = "0160a13a177a45bfb43ce71c01580998474f556ad854dcbca936dd2841a5c556"
 dependencies = [
  "core-foundation-sys",
  "libc",
@@ -2472,9 +2478,9 @@ dependencies = [
 
 [[package]]
 name = "semver"
-version = "1.0.4"
+version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "568a8e6258aa33c13358f81fd834adb854c6f7c9468520910a9b1e8fac068012"
+checksum = "0486718e92ec9a68fbed73bb5ef687d71103b142595b406835649bebd33f72c7"
 
 [[package]]
 name = "serde"
@@ -2791,11 +2797,12 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.1.43"
+version = "0.1.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca8a50ef2360fbd1eeb0ecd46795a87a19024eb4b53c5dc916ca1fd95fe62438"
+checksum = "6db9e6914ab8b1ae1c260a4ae7a49b6c5611b40328a735b21862567685e73255"
 dependencies = [
  "libc",
+ "wasi",
  "winapi",
 ]
 
@@ -3001,9 +3008,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-subscriber"
-version = "0.3.7"
+version = "0.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5312f325fe3588e277415f5a6cca1f4ccad0f248c4cd5a4bd33032d7286abc22"
+checksum = "74786ce43333fcf51efe947aed9718fbe46d5c7328ec3f1029e818083966d9aa"
 dependencies = [
  "ansi_term",
  "sharded-slab",
@@ -3015,15 +3022,15 @@ dependencies = [
 
 [[package]]
 name = "transmog"
-version = "0.1.0-dev.2"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "94b82e27b883ae8c15d8afe4968f669e124927fe3661b320f612ec02c81c64bd"
+checksum = "d3a7f05cba0120a41e81c7309f084e8b1014118ed19857d6e878c79f0fc4efac"
 
 [[package]]
 name = "transmog-json"
-version = "0.1.0-dev.2"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d343d111f6f97b986a3217e5b5cba228a2ff89559dbac7a200296e4e2860d9e"
+checksum = "78ff21f637f47a0fe5b0745de836e70bf8ffc5cecd6b201ca97717a867136646"
 dependencies = [
  "serde",
  "serde_json",
@@ -3033,9 +3040,9 @@ dependencies = [
 
 [[package]]
 name = "transmog-pot"
-version = "0.1.0-dev.2"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec664dab550be9aedf8ca35b677883f1391cf2647468f2b5b41d7d56b265da98"
+checksum = "be18a023411801d33a217c6b02316f5c71e373e8847dd521fc5a24710273ac48"
 dependencies = [
  "pot",
  "serde",
@@ -3236,9 +3243,9 @@ dependencies = [
 
 [[package]]
 name = "wasi"
-version = "0.10.2+wasi-snapshot-preview1"
+version = "0.10.0+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd6fbd9a79829dd1ad0cc20627bf1ed606756a7f77edff7b66b7064f9cb327c6"
+checksum = "1a143597ca7c7793eff794def352d41792a93c481eb1042423ff7ff72ba2c31f"
 
 [[package]]
 name = "wasm-bindgen"
