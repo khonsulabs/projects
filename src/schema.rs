@@ -1,9 +1,9 @@
 use async_trait::async_trait;
 use bonsaidb::core::{
-    document::{BorrowedDocument, Document},
+    document::{CollectionDocument, Emit},
     schema::{
-        Collection, CollectionName, DefaultViewSerialization, Name, Schema, SchemaName, Schematic,
-        SerializedCollection, View, ViewMapResult, ViewSchema,
+        Collection, CollectionName, CollectionViewSchema, DefaultViewSerialization, Name,
+        Qualified, Schema, SchemaName, Schematic, SerializedCollection, View, ViewMapResult,
     },
 };
 use chrono::{DateTime, Utc};
@@ -54,6 +54,8 @@ pub struct Repository {
 
 #[async_trait]
 impl Collection for Event {
+    type PrimaryKey = u64;
+
     fn collection_name() -> CollectionName {
         CollectionName::new("khonsulabs", "github-events")
     }
@@ -87,11 +89,10 @@ impl View for GitHubEventById {
     }
 }
 
-impl ViewSchema for GitHubEventById {
+impl CollectionViewSchema for GitHubEventById {
     type View = Self;
-    fn map(&self, document: &BorrowedDocument<'_>) -> ViewMapResult<Self> {
-        let event = document.contents::<Event>().unwrap();
-        Ok(document.emit_key(event.id))
+    fn map(&self, document: CollectionDocument<Event>) -> ViewMapResult<Self> {
+        document.header.emit_key(document.contents.id)
     }
 }
 
@@ -110,11 +111,12 @@ impl View for GitHubEventByDate {
     }
 }
 
-impl ViewSchema for GitHubEventByDate {
+impl CollectionViewSchema for GitHubEventByDate {
     type View = Self;
-    fn map(&self, document: &BorrowedDocument<'_>) -> ViewMapResult<Self> {
-        let event = document.contents::<Event>().unwrap();
-        Ok(document.emit_key(event.created_at.format("%Y-%m-%d").to_string()))
+    fn map(&self, document: CollectionDocument<Event>) -> ViewMapResult<Self> {
+        document
+            .header
+            .emit_key(document.contents.created_at.format("%Y-%m-%d").to_string())
     }
 }
 

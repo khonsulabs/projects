@@ -1,11 +1,11 @@
 use std::env;
 
 use bonsaidb::{
-    core::connection::StorageConnection,
+    core::connection::AsyncStorageConnection,
     keystorage::s3::{aws_sdk_s3::Endpoint, S3VaultKeyStorage},
     local::{
         config::{Builder, StorageConfiguration},
-        Storage,
+        AsyncStorage,
     },
 };
 use http::Uri;
@@ -29,7 +29,8 @@ async fn main() -> anyhow::Result<()> {
         // sets this to be the default, global collector for this application.
         .init();
 
-    let mut configuration = StorageConfiguration::new("projects.bonsaidb");
+    let mut configuration =
+        StorageConfiguration::new("projects.bonsaidb").with_schema::<Projects>()?;
     if let Ok(bucket) = env::var("VAULT_S3_BUCKET") {
         configuration = configuration.vault_key_storage(
             S3VaultKeyStorage::new(bucket)
@@ -40,8 +41,7 @@ async fn main() -> anyhow::Result<()> {
         );
     }
 
-    let storage = Storage::open(configuration).await?;
-    storage.register_schema::<Projects>().await?;
+    let storage = AsyncStorage::open(configuration).await?;
     storage
         .create_database::<Projects>("projects", true)
         .await?;

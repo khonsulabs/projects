@@ -14,10 +14,11 @@ reqwest = { version = "0.11.9", default-features = false, features = [
 ] }
 tokio = { version = "1.16.1", features = ["full"] }
 anyhow = { version = "1.0.53", features = ["backtrace"] }
-bonsaidb = { version = "0.1.0", features = [
+bonsaidb = { version = "0.4.0", features = [
     "local",
     "local-instrument",
     "local-encryption",
+    "local-async",
     "keystorage-s3",
 ] }
 tracing = "0.1.30"
@@ -32,9 +33,9 @@ http = "0.2.6"
 tower-http = { version = "0.2.1", features = ["fs"] }
 once_cell = "1.9.0"
 
-# [patch.crates-io]
+[patch.crates-io]
 # pot = { path = "../pot/pot", version = "0.1.0-alpha.2" }
 # nebari = { path = "../nebari/nebari", version = "0.1.0-rc.4" }
+# bonsaidb = { path = "../bonsaidb/crates/bonsaidb" }
 
 # [patch."https://github.com/khonsulabs/bonsaidb.git"]
-# bonsaidb = { path = "../bonsaidb/crates/bonsaidb" }

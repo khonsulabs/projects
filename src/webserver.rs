@@ -1,10 +1,7 @@
 use std::{collections::HashMap, convert::Infallible, net::SocketAddr, sync::Arc};
 
-use axum::{extract, response::Html, AddExtensionLayer, Router};
-use bonsaidb::{
-    core::{connection::Connection, document::Document},
-    local::Database,
-};
+use axum::{extract, extract::Extension, response::Html, Router};
+use bonsaidb::{core::connection::AsyncConnection, local::AsyncDatabase};
 use chrono::{Duration, Utc};
 use http::StatusCode;
 use serde::{Deserialize, Serialize};
@@ -14,7 +11,7 @@ use transmog_json::serde_json;
 
 use crate::{
     projects::PROJECTS,
-    schema::{Event, GitHubEventByDate, IssuesPayload, PushPayload, Release, ReleasePayload},
+    schema::{GitHubEventByDate, IssuesPayload, PushPayload, Release, ReleasePayload},
 };
 
 const CONTRIBUTOR_EMAILS: [&str; 2] = ["jon@khonsulabs.com", "daxpedda@gmail.com"];
@@ -28,7 +25,7 @@ const FORKED_REPOSITORIES: [&str; 7] = [
     "ModProg/derive-restricted",
 ];
 
-pub async fn serve(database: Database) -> anyhow::Result<()> {
+pub async fn serve(database: AsyncDatabase) -> anyhow::Result<()> {
     let templates = Tera::new("templates/**/*")?;
 
     let templates = Arc::new(templates);
@@ -46,8 +43,8 @@ pub async fn serve(database: Database) -> anyhow::Result<()> {
                 },
             ),
         )
-        .layer(AddExtensionLayer::new(templates))
-        .layer(AddExtensionLayer::new(database));
+        .layer(Extension(templates))
+        .layer(Extension(database));
 
     // run it
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -60,7 +57,7 @@ pub async fn serve(database: Database) -> anyhow::Result<()> {
 
 async fn index_handler(
     templates: extract::Extension<Arc<Tera>>,
-    database: extract::Extension<Database>,
+    database: extract::Extension<AsyncDatabase>,
 ) -> Result<Html<String>, (StatusCode, String)> {
     index(templates, database)
         .await
@@ -69,7 +66,7 @@ async fn index_handler(
 
 async fn index(
     templates: extract::Extension<Arc<Tera>>,
-    database: extract::Extension<Database>,
+    database: extract::Extension<AsyncDatabase>,
 ) -> Result<Html<String>, anyhow::Error> {
     // While debugging, reload the templates always.
     #[cfg(debug_assertions)]
@@ -86,12 +83,12 @@ async fn index(
         .with_key_range(
             one_month_ago.format("%Y-%m-%d").to_string()..tomorrow.format("%Y-%m-%d").to_string(),
         )
-        .query_with_docs()
+        .query_with_collection_docs()
         .await?;
     let mut days = Vec::new();
     let mut current_day = None;
     for event in &events {
-        let github_event = event.document.contents::<Event>()?;
+        let github_event = &event.document.contents;
 
         // Ignore all events from bot actors
         if github_event.actor.login.ends_with("[bot]") {

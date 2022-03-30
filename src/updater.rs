@@ -1,8 +1,8 @@
 use std::time::Duration;
 
 use bonsaidb::{
-    core::{connection::Connection, schema::SerializedCollection},
-    local::Database,
+    core::{connection::AsyncConnection, schema::SerializedCollection},
+    local::AsyncDatabase,
 };
 use reqwest::{
     header::{ACCEPT, USER_AGENT},
@@ -12,7 +12,7 @@ use transmog_json::serde_json;
 
 use crate::schema::{Event, GitHubEventById};
 
-pub async fn update_events_periodically(storage: Database) -> anyhow::Result<()> {
+pub async fn update_events_periodically(storage: AsyncDatabase) -> anyhow::Result<()> {
     let instance = Client::new();
     loop {
         tracing::info!("Fetching new events from GitHub");
@@ -22,7 +22,7 @@ pub async fn update_events_periodically(storage: Database) -> anyhow::Result<()>
     }
 }
 
-async fn fetch_new_events(database: &Database, client: &Client) -> anyhow::Result<()> {
+async fn fetch_new_events(database: &AsyncDatabase, client: &Client) -> anyhow::Result<()> {
     let mut events_to_process = Vec::new();
 
     // Loop and gather all the vents we need to insert, potentially across multiple pages.
@@ -71,7 +71,7 @@ async fn fetch_new_events(database: &Database, client: &Client) -> anyhow::Resul
     tracing::info!("Received {} events", events_to_process.len());
     for event in events_to_process {
         tracing::debug!("Inserting event {:?}", event);
-        event.push_into(database).await?;
+        event.push_into_async(database).await?;
     }
 
     Ok(())
